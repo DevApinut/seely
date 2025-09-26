@@ -1,0 +1,65 @@
+services:
+  certgen:
+    image: alpine:latest
+    container_name: certgen
+    command: >
+      sh -c "
+        if [ ! -f /certs/tls.key ] || [ ! -f /certs/tls.crt ]; then
+          apk add --no-cache openssl &&
+          openssl req -x509 -newkey rsa:4096 -keyout /certs/tls.key -out /certs/tls.crt -days 365 -nodes -subj '/CN=localhost'
+        fi
+        chmod 644 /certs/tls.key /certs/tls.crt
+      "
+    volumes:
+      - ./certs:/certs
+    entrypoint: ""
+
+
+  postgres:
+    image: postgres:17
+    container_name: db-postgres
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: pass2word
+      POSTGRES_DB: postgres
+    volumes:
+      - ./certs:/etc/x509/https
+      - ./postgres/postgres-data:/var/lib/postgresql/data
+      - ./postgres/init.sql:/docker-entrypoint-initdb.d/init.sql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+  
+  keycloak:
+    image: quay.io/keycloak/keycloak:24.0.4
+    container_name: keycloak
+    command: start-dev --import-realm --https-port=8443 
+    ports:
+      - "8443:8443"
+    environment:
+      KC_DB: postgres
+      KC_DB_URL_HOST: postgres
+      KC_DB_URL_PORT: 5432
+      KC_DB_URL_DATABASE: keycloak
+      KC_DB_USERNAME: postgres
+      KC_DB_PASSWORD: pass2word
+      KEYCLOAK_ADMIN: admin
+      KEYCLOAK_ADMIN_PASSWORD: admin
+      KC_FEATURES: account3,admin-fine-grained-authz   
+      KC_HTTPS_CERTIFICATE_FILE: /etc/x509/https/tls.crt
+      KC_HTTPS_CERTIFICATE_KEY_FILE: /etc/x509/https/tls.key
+      KC_HTTP_MAX_HEADER_SIZE: 32768
+    volumes:
+      - ./certs:/etc/x509/https
+      - ./Keycloak/themes:/opt/keycloak/themes
+      - ./Keycloak/keycloak-conf:/opt/keycloak/conf
+      - ./Keycloak/realm-export:/opt/keycloak/data/import
+      - ./Keycloak/realm-export:/tmp/realm-export
+    depends_on:
+      postgres:
+        condition: service_healthy
+    restart: unless-stopped 
+  
