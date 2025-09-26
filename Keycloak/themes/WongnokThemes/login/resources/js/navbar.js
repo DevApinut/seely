@@ -6,7 +6,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const navbar = document.createElement('div');
     navbar.className = 'custom-navbar';
     navbar.innerHTML = `
-        <a href="http://localhost" class="nav-home">
+        <a href="https://localhost:8443" class="nav-home">
             <span class="nav-icon">🏠</span>
             <span class="nav-text">Home</span>
         </a>           
