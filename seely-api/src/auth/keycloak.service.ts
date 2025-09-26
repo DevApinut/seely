@@ -153,13 +153,14 @@ export class KeycloakService {
       url: `code=${code}&state=${state}&session_state=${sessionState}&iss=${issuer}`,
     });
 
-    // ลบ cookies ที่ใช้แล้ว
-    res.clearCookie('state');
-    res.clearCookie('codeVerifier');
+    // // ลบ cookies ที่ใช้แล้ว
+    // res.clearCookie('state');
+    // res.clearCookie('codeVerifier');
 
     // ตั้งค่า cookies สำหรับ tokens
     res.cookie('idToken', result.idToken);
     res.cookie('refreshToken', result.tokensDto.refreshToken);
+    res.cookie('accessToken', result.tokensDto.accessToken);
 
     return {
       message: 'Login successful',
@@ -178,7 +179,7 @@ export class KeycloakService {
     res.cookie('state', state);
     res.cookie('codeVerifier', codeVerifier);
     
-    // Redirect ไปที่ Keycloak login page โดยตรง
+   
     res.redirect(url);
   }
 

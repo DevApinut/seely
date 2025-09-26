@@ -11,41 +11,47 @@ import { KeycloakService } from './keycloak.service';
 export class AuthController {
   constructor(
     private readonly authService: AuthService,
-    private readonly keycloakService: KeycloakService) {}
+    private readonly keycloakService: KeycloakService,
+  ) {}
 
   @Post('login')
   async login(
     @Body() loginDto: LoginDto,
-    @Res({ passthrough: true }) res: Response
+    @Res({ passthrough: true }) res: Response,
   ) {
-    const { accessToken, refreshToken } = await this.authService.login(loginDto);
+    const { accessToken, refreshToken } =
+      await this.authService.login(loginDto);
 
-    res.cookie('refreshToken', refreshToken)
-    
-    return { accessToken }
+    res.cookie('accessToken', accessToken);
+    res.cookie('refreshToken', refreshToken);
+
+    return { accessToken };
   }
 
   @UseGuards(AuthGuard('refresh-jwt'))
   @Post('refresh-token')
-  refreshToken(@Req() req: { user: LoggedInDto}) {
+  refreshToken(
+    @Req() req: { user: LoggedInDto },
+    @Res({ passthrough: true }) res: Response,
+  ) {
     // return new accessToken
-    return this.authService.refreshToken(req.user)
+    const accessToken = this.authService.refreshToken(req.user);
+    res.cookie('accessToken', accessToken);
+    return accessToken;
   }
-  
+
   @Post('logout')
-  async logout(
-    @Req() req: Request,
-    @Res({ passthrough: true }) res: Response) {
+  async logout(@Req() req: Request, @Res({ passthrough: true }) res: Response) {
+    res.clearCookie('accessToken');
     res.clearCookie('refreshToken');
 
-    const idToken = req.cookies?.idToken
+    const idToken = req.cookies?.idToken;
     if (idToken) {
-      const logoutUrl = await this.keycloakService.logout(idToken)
-      res.clearCookie('idToken')
-      return { logoutUrl }
+      const logoutUrl = await this.keycloakService.logout(idToken);
+      res.clearCookie('idToken');
+      return { logoutUrl };
     }
 
-    return { logoutUrl: null }
+    return { logoutUrl: null };
   }
-
 }

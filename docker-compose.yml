@@ -31,7 +31,9 @@ services:
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U postgres"]
       interval: 10s
-      timeout: 5s
+      timeout: 5s      
+      retries: 10  
+      start_period: 30s 
   
   keycloak:
     image: quay.io/keycloak/keycloak:24.0.4

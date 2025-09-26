@@ -245,8 +245,7 @@
         "containerId" : "da454242-3e2a-414d-be1d-46e19b7e9229",
         "attributes" : { }
       } ],
-      "security-admin-console" : [ ],
-      "wongnok" : [ {
+      "seely" : [ {
         "id" : "f3bed2ad-bad2-42f7-9bc4-85e3da8f057d",
         "name" : "uma_protection",
         "composite" : false,
@@ -254,6 +253,7 @@
         "containerId" : "3f8f078e-b12f-44d4-a6a8-ca510f2d1bb1",
         "attributes" : { }
       } ],
+      "security-admin-console" : [ ],
       "admin-cli" : [ ],
       "account-console" : [ ],
       "broker" : [ {
@@ -404,27 +404,27 @@
     "requiredActions" : [ ],
     "realmRoles" : [ "default-roles-devpool_project" ],
     "clientConsents" : [ {
-      "clientId" : "wongnok",
-      "grantedClientScopes" : [ "wongnok", "roles", "profile", "email" ],
-      "createdDate" : 1758548680615,
-      "lastUpdatedDate" : 1758548680655
+      "clientId" : "seely",
+      "grantedClientScopes" : [ "seely", "roles", "profile", "email" ],
+      "createdDate" : 1758890110355,
+      "lastUpdatedDate" : 1758890110387
     } ],
     "notBefore" : 0,
     "groups" : [ ]
   }, {
     "id" : "cd23d692-de6e-49d5-90c9-2abd93b574f5",
-    "username" : "service-account-wongnok",
+    "username" : "service-account-seely",
     "emailVerified" : false,
     "createdTimestamp" : 1755768858748,
     "enabled" : true,
     "totp" : false,
-    "serviceAccountClientId" : "wongnok",
+    "serviceAccountClientId" : "seely",
     "credentials" : [ ],
     "disableableCredentialTypes" : [ ],
     "requiredActions" : [ ],
     "realmRoles" : [ "default-roles-devpool_project" ],
     "clientRoles" : {
-      "wongnok" : [ "uma_protection" ]
+      "seely" : [ "uma_protection" ]
     },
     "notBefore" : 0,
     "groups" : [ ]
@@ -449,10 +449,10 @@
     "requiredActions" : [ ],
     "realmRoles" : [ "default-roles-devpool_project" ],
     "clientConsents" : [ {
-      "clientId" : "wongnok",
-      "grantedClientScopes" : [ "wongnok", "roles", "profile", "email" ],
-      "createdDate" : 1758548680771,
-      "lastUpdatedDate" : 1758548680796
+      "clientId" : "seely",
+      "grantedClientScopes" : [ "seely", "roles", "profile", "email" ],
+      "createdDate" : 1758890110477,
+      "lastUpdatedDate" : 1758890110495
     } ],
     "notBefore" : 0,
     "groups" : [ ]
@@ -669,8 +669,8 @@
     "optionalClientScopes" : [ "address", "phone", "offline_access", "microprofile-jwt" ]
   }, {
     "id" : "3f8f078e-b12f-44d4-a6a8-ca510f2d1bb1",
-    "clientId" : "wongnok",
-    "name" : "wongnok",
+    "clientId" : "seely",
+    "name" : "seely",
     "description" : "",
     "rootUrl" : "",
     "adminUrl" : "",
@@ -680,8 +680,8 @@
     "alwaysDisplayInConsole" : true,
     "clientAuthenticatorType" : "client-secret",
     "secret" : "zDFCurmEkhGN1iIxA3NhmpVlft2qCncJ",
-    "redirectUris" : [ "", "http://localhost:4200/login" ],
-    "webOrigins" : [ "http://localhost:4200" ],
+    "redirectUris" : [ "", "http://localhost:3000/api/v1/keycloak/callback" ],
+    "webOrigins" : [ "http://localhost:3000" ],
     "notBefore" : 0,
     "bearerOnly" : false,
     "consentRequired" : true,
@@ -696,7 +696,7 @@
       "oidc.ciba.grant.enabled" : "false",
       "client.secret.creation.time" : "1755768858",
       "backchannel.logout.session.required" : "true",
-      "post.logout.redirect.uris" : "+",
+      "post.logout.redirect.uris" : "http://localhost:3000/api/v1/keycloak/logout-success",
       "display.on.consent.screen" : "true",
       "oauth2.device.authorization.grant.enabled" : "false",
       "backchannel.logout.revoke.offline.tokens" : "false"
@@ -1329,7 +1329,7 @@
       "subType" : "authenticated",
       "subComponents" : { },
       "config" : {
-        "allowed-protocol-mapper-types" : [ "saml-user-attribute-mapper", "saml-role-list-mapper", "saml-user-property-mapper", "oidc-address-mapper", "oidc-sha256-pairwise-sub-mapper", "oidc-full-name-mapper", "oidc-usermodel-property-mapper", "oidc-usermodel-attribute-mapper" ]
+        "allowed-protocol-mapper-types" : [ "oidc-usermodel-attribute-mapper", "oidc-full-name-mapper", "oidc-sha256-pairwise-sub-mapper", "oidc-usermodel-property-mapper", "saml-user-property-mapper", "oidc-address-mapper", "saml-user-attribute-mapper", "saml-role-list-mapper" ]
       }
     }, {
       "id" : "f94a9b5f-6d05-4fb4-8986-a8bb1d64086e",
@@ -1338,7 +1338,7 @@
       "subType" : "anonymous",
       "subComponents" : { },
       "config" : {
-        "allowed-protocol-mapper-types" : [ "oidc-sha256-pairwise-sub-mapper", "saml-user-property-mapper", "oidc-usermodel-attribute-mapper", "oidc-address-mapper", "saml-user-attribute-mapper", "oidc-full-name-mapper", "oidc-usermodel-property-mapper", "saml-role-list-mapper" ]
+        "allowed-protocol-mapper-types" : [ "saml-user-property-mapper", "oidc-address-mapper", "oidc-sha256-pairwise-sub-mapper", "oidc-usermodel-property-mapper", "saml-user-attribute-mapper", "oidc-full-name-mapper", "saml-role-list-mapper", "oidc-usermodel-attribute-mapper" ]
       }
     } ],
     "org.keycloak.keys.KeyProvider" : [ {
