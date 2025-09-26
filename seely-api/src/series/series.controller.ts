@@ -22,7 +22,6 @@ import { CreateSeriesDto } from './dto/create-series.dto';
 import { UpdateSeriesDto } from './dto/update-series.dto';
 import { paginateConfig } from './series.service';
 import { ApiPaginationQuery, Paginate, PaginateQuery } from 'nestjs-paginate';
-import { PasswordRemoverInterceptor } from '@app/interceptors/password-remover.interceptor';
 
 @Controller('series')
 export class SeriesController {
