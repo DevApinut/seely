@@ -12,14 +12,17 @@ import {
   Put,
   Req,
   UseGuards,
+  UseInterceptors
 } from '@nestjs/common';
 
 import { AuthGuard } from '@nestjs/passport';
+import { OptionalJwtGuard } from '@app/auth/guards/optional-jwt.guard';
 import { SeriesService } from './series.service';
 import { CreateSeriesDto } from './dto/create-series.dto';
 import { UpdateSeriesDto } from './dto/update-series.dto';
 import { paginateConfig } from './series.service';
 import { ApiPaginationQuery, Paginate, PaginateQuery } from 'nestjs-paginate';
+import { PasswordRemoverInterceptor } from '@app/interceptors/password-remover.interceptor';
 
 @Controller('series')
 export class SeriesController {
@@ -34,15 +37,17 @@ export class SeriesController {
     return this.seriesService.create(createSeriesDto, req.user);
   }
 
-  @ApiPaginationQuery(paginateConfig)
+  @UseGuards(OptionalJwtGuard)
+  @ApiPaginationQuery(paginateConfig) 
   @Get()
-  search(@Paginate() query: PaginateQuery) {
-    return this.seriesService.search(query);
+  search(@Paginate() query: PaginateQuery, @Req() req: { user?: LoggedInDto }) {
+    return this.seriesService.search(query, req.user);
   }
 
+  @UseGuards(OptionalJwtGuard)
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.seriesService.findOne(+id);
+  findOne(@Param('id') id: string, @Req() req: { user?: LoggedInDto }) {
+    return this.seriesService.findOne(+id, req.user);
   }
 
   @UseGuards(AuthGuard('jwt'))

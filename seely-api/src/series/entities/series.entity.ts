@@ -1,10 +1,12 @@
 import { Rating } from '@app/rating/entities/rating.entity';
+import { Suggest } from '@app/suggest/entities/suggest.entity';
 import { User } from '@app/users/entities/user.entity';
 import {
   Column,
   Entity,
   JoinColumn,
   ManyToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 @Entity({ name: 'series' })
@@ -18,16 +20,16 @@ export class Series {
   @Column()
   year: number;
 
-  @Column()
-  review: string;
+  @OneToMany(() => Suggest, (suggest) => suggest.series)
+  suggests: Suggest[];
 
-  @Column({ type: 'decimal', precision: 3, scale: 1 })
-  score: number;
+  @Column({ default: '' })
+  review: string;
 
   @Column({ name: 'image_url' })
   imageUrl: string;
 
-  @ManyToOne(() => Rating)
+  @ManyToOne(() => Rating, { nullable: true })
   @JoinColumn({ name: 'rating_id', referencedColumnName: 'id' })
   rating: Rating;
 
@@ -35,4 +37,7 @@ export class Series {
   @JoinColumn({ name: 'username', referencedColumnName: 'username' })
   user: User;
 
+  // Virtual columns for aggregated data
+  totalSuggests?: number;
+  averageScore?: number;
 }

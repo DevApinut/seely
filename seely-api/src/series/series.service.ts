@@ -7,10 +7,9 @@ import { Repository } from 'typeorm';
 import { Series } from './entities/series.entity';
 import { LoggedInDto } from '@app/auth/dto/logged-in.dto';
 
-
 export const paginateConfig: PaginateConfig<Series> = {
-  sortableColumns: ['id', 'name' ],
-  searchableColumns: ['name', 'name' , 'year'],  
+  sortableColumns: ['id', 'name'],
+  searchableColumns: ['name', 'name', 'year'],
   defaultLimit: 10,
   maxLimit: 100,
 };
@@ -22,10 +21,42 @@ export class SeriesService {
     private readonly repository: Repository<Series>,
   ) {}
 
-  private queryTemplate() {
-    return this.repository
+  private queryTemplate(loggedInDto?: LoggedInDto) {
+    const query = this.repository
       .createQueryBuilder('series')
-      .leftJoinAndSelect('series.rating', 'rating')        
+      .leftJoinAndSelect('series.rating', 'rating')
+      .leftJoin('series.user', 'seriesUser')
+      .addSelect('seriesUser.username');
+    
+    if (loggedInDto) {
+      query
+        .leftJoin('series.suggests', 'suggests', 
+          'suggests.series_id = series.id AND suggests.username = :username', 
+          { username: loggedInDto.username })
+        .addSelect(['suggests.series_id', 'suggests.score'])
+        .leftJoin('suggests.user', 'suggestUser')
+        .addSelect(['suggestUser.username', 'suggestUser.role'])
+        .andWhere('seriesUser.username = :username', 
+          { username: loggedInDto.username });
+    }
+    
+    return query;
+  }
+
+  // Add new method to get stats
+  private async getSeriesStats(seriesId: number) {
+    const result = await this.repository
+      .createQueryBuilder('series')
+      .leftJoin('series.suggests', 'suggests')
+      .select('COUNT(suggests.id)', 'totalSuggests')
+      .addSelect('COALESCE(AVG(suggests.score), 0)', 'averageScore')
+      .where('series.id = :seriesId', { seriesId })
+      .getRawOne();
+    
+    return {
+      totalSuggests: parseInt(result.totalSuggests) || 0,
+      averageScore: parseFloat(parseFloat(result.averageScore).toFixed(2)) || 0
+    };
   }
 
   // for init to create data
@@ -39,10 +70,8 @@ export class SeriesService {
           year: 2016,
           review:
             'A nostalgic sci-fi horror series that perfectly captures 80s nostalgia while delivering compelling supernatural mysteries and strong character development.',
-          score: 8.7,
           imageUrl: 'https://example.com/images/stranger-things.jpg',
-          rating: { id: 1 },
-          
+          rating: { id: 3 }   
         },
 
         // Example 2 - HBO Series
@@ -51,9 +80,8 @@ export class SeriesService {
           year: 2011,
           review:
             'Epic fantasy drama with complex political intrigue, memorable characters, and stunning production values, though later seasons were divisive.',
-          score: 9.2,
           imageUrl: 'https://example.com/images/game-of-thrones.jpg',
-          rating: { id: 3 }, 
+          rating: { id: 4 }   
         },
 
         // Example 3 - Comedy Series
@@ -62,9 +90,8 @@ export class SeriesService {
           year: 2005,
           review:
             'Hilarious mockumentary-style comedy about office life with perfect character chemistry and quotable moments that remain timeless.',
-          score: 9.0,
           imageUrl: 'https://example.com/images/the-office.jpg',
-          rating: { id: 2 }, 
+          rating: { id: 6 }   
         },
 
         // Example 4 - Anime Series
@@ -73,9 +100,8 @@ export class SeriesService {
           year: 2013,
           review:
             'Dark and intense anime with incredible world-building, complex themes about freedom and humanity, and jaw-dropping plot twists.',
-          score: 9.0,
           imageUrl: 'https://example.com/images/attack-on-titan.jpg',
-          rating: { id: 3 }, 
+          rating: { id: 4 }   
         },
 
         // Example 5 - Crime Drama
@@ -84,9 +110,8 @@ export class SeriesService {
           year: 2008,
           review:
             'Masterful character study of moral decay with exceptional writing, acting, and cinematography that creates television history.',
-          score: 9.5,
           imageUrl: 'https://example.com/images/breaking-bad.jpg',
-          rating: { id: 3 }, 
+          rating: { id: 2 }   
         },
 
         // Example 6 - Thai Series
@@ -95,9 +120,8 @@ export class SeriesService {
           year: 2022,
           review:
             'ซีรีส์ไทยที่มีเนื้อเรื่องเข้มข้น เล่าเรื่องราวทางประวัติศาสตร์ที่น่าสนใจ พร้อมการแสดงที่ประทับใจ',
-          score: 8.2,
           imageUrl: 'https://example.com/images/empress-ayodhaya.jpg',
-          rating: { id: 2 }, 
+          rating: { id: 1 }
         },
 
         // Example 7 - Documentary Series
@@ -106,9 +130,8 @@ export class SeriesService {
           year: 2019,
           review:
             'Breathtaking nature documentary series with stunning cinematography that showcases the beauty and fragility of our natural world.',
-          score: 9.3,
-          imageUrl: 'https://example.com/images/our-planet.jpg',
-          rating: { id: 1 }, 
+          imageUrl: 'https://example.com/images/our-planet.jpg', 
+          rating: { id: 3 }         
         },
       ]);
     }
@@ -121,40 +144,61 @@ export class SeriesService {
     });
   }
 
-  async search(query: PaginateQuery) {
+  async search(query: PaginateQuery, loggedInDto?: LoggedInDto) {
     const page = await paginate<Series>(
       query,
-      this.queryTemplate(),
+      this.queryTemplate(loggedInDto),
       paginateConfig,
+    );
+    
+    const dataWithStats = await Promise.all(
+      page.data.map(async (series) => {
+        const stats = await this.getSeriesStats(series.id);
+        return {
+          ...series,
+          totalSuggests: stats.totalSuggests,
+          averageScore: stats.averageScore
+        };
+      })
     );
 
     return {
-      data: page.data,
+      data: dataWithStats,
       meta: page.meta,
     };
   }
 
-  findOne(id: number) {
-    return this.queryTemplate().where('series.id = :id', { id }).getOne();
+  async findOne(id: number, loggedInDto?: LoggedInDto) {
+    const series = await this.queryTemplate(loggedInDto).where('series.id = :id', { id }).getOne();
+    
+    if (series) {
+      const stats = await this.getSeriesStats(series.id);
+      return {
+        ...series,
+        totalSuggests: stats.totalSuggests,
+        averageScore: stats.averageScore
+      };
+    }
+    
+    return series;
   }
-
 
   async update(
     id: number,
-    updateSeriesDto: UpdateSeriesDto,    
+    updateSeriesDto: UpdateSeriesDto,
     loggedInDto: LoggedInDto,
   ) {
     return this.repository
-      .findOneByOrFail({id, user: { username: loggedInDto.username }})
+      .findOneByOrFail({ id, user: { username: loggedInDto.username } })
       .then(() => this.repository.save({ id, ...updateSeriesDto }))
-      .catch((err) => {        
+      .catch((err) => {
         throw new NotFoundException(`Not found: id=${id}`);
       });
-  }  
+  }
 
-  remove(id: number,loggedInDto: LoggedInDto,) {
+  remove(id: number, loggedInDto: LoggedInDto) {
     return this.repository
-      .findOneByOrFail({ id, user: { username: loggedInDto.username }})
+      .findOneByOrFail({ id, user: { username: loggedInDto.username } })
       .then(() => this.repository.delete({ id }))
       .catch(() => {
         throw new NotFoundException(`Not found: id=${id}`);

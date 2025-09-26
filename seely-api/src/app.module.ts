@@ -9,6 +9,7 @@ import { UsersModule } from './users/users.module';
 import { JwtStrategy } from './auth/strategies/jwt.strategy';
 import { AuthModule } from './auth/auth.module';
 import { dataSourceOptions } from './data-source';
+import { SuggestModule } from './suggest/suggest.module';
 
 @Module({
   imports: [
@@ -22,7 +23,8 @@ import { dataSourceOptions } from './data-source';
     SeriesModule,
     RatingModule,
     UsersModule,
-    AuthModule,    
+    AuthModule,
+    SuggestModule,    
   ],
   controllers: [AppController],
   providers: [AppService, JwtStrategy],
