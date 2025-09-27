@@ -82,7 +82,7 @@ describe('JWT Authentication (e2e)', () => {
       const response = await request(getApp().getHttpServer())
         .post('/auth/login')
         .send({
-          username: 'Donut',
+          username: 'DonutAA',
           password: '1234',
         })
         .expect(500);

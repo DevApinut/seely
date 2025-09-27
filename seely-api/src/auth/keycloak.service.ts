@@ -160,7 +160,7 @@ export class KeycloakService {
     // ตั้งค่า cookies สำหรับ tokens
     res.cookie('idToken', result.idToken);
     res.cookie('refreshToken', result.tokensDto.refreshToken);
-    res.cookie('accessToken', result.tokensDto.accessToken);
+    res.cookie('refreshToken', result.tokensDto.refreshToken);
 
     return {
       message: 'Login successful',

@@ -38,12 +38,16 @@ export class SeriesService {
         )
         .addSelect(['suggests.series_id', 'suggests.score'])
         .leftJoin('suggests.user', 'suggestUser')
-        .addSelect(['suggestUser.username', 'suggestUser.role'])
-        .andWhere('seriesUser.username = :username', {
-          username: loggedInDto.username,
-        });
+        .addSelect(['suggestUser.username', 'suggestUser.role']);
+    } else {
+      // For non-logged users, still load suggests structure but empty
+      query
+        .leftJoin('series.suggests', 'suggests', '1=0') 
+        .addSelect(['suggests.series_id', 'suggests.score'])
+        .leftJoin('suggests.user', 'suggestUser', '1=0')
+        .addSelect(['suggestUser.username', 'suggestUser.role']);
     }
-
+    
     return query;
   }
 
@@ -165,20 +169,26 @@ export class SeriesService {
     updateSeriesDto: UpdateSeriesDto,
     loggedInDto: LoggedInDto,
   ) {
-    return this.repository
-      .findOneByOrFail({ id, user: { username: loggedInDto.username } })
-      .then(() => this.repository.save({ id, ...updateSeriesDto }))
-      .catch((err) => {
-        throw new NotFoundException(`Not found: id=${id}`);
+    try {
+      const series = await this.repository.findOneByOrFail({ 
+        id, 
+        user: { username: loggedInDto.username } 
       });
+      return await this.repository.save({ id, ...updateSeriesDto });
+    } catch (err) {
+      throw new NotFoundException(`Series not found id=${id}`);
+    }
   }
 
-  remove(id: number, loggedInDto: LoggedInDto) {
-    return this.repository
-      .findOneByOrFail({ id, user: { username: loggedInDto.username } })
-      .then(() => this.repository.delete({ id }))
-      .catch(() => {
-        throw new NotFoundException(`Not found: id=${id}`);
+  async remove(id: number, loggedInDto: LoggedInDto) {
+    try {
+      await this.repository.findOneByOrFail({ 
+        id, 
+        user: { username: loggedInDto.username } 
       });
+      return await this.repository.delete({ id });
+    } catch (err) {
+      throw new NotFoundException(`Series not found id=${id}`);
+    }
   }
 }

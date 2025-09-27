@@ -37,7 +37,7 @@ export class Series {
   @JoinColumn({ name: 'username', referencedColumnName: 'username' })
   user: User;
 
-  // Virtual columns for aggregated data
+  
   totalSuggests?: number;
   averageScore?: number;
 

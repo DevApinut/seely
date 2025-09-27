@@ -25,7 +25,7 @@ export class AuthController {
     res.cookie('accessToken', accessToken);
     res.cookie('refreshToken', refreshToken);
 
-    return { accessToken };
+    return { accessToken,refreshToken};
   }
 
   @UseGuards(AuthGuard('refresh-jwt'))
@@ -52,6 +52,6 @@ export class AuthController {
       return { logoutUrl };
     }
 
-    return { logoutUrl: null };
+    return { logoutUrl: "logout success" };
   }
 }
