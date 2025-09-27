@@ -44,6 +44,13 @@ export class SeriesController {
   }
 
   @UseGuards(OptionalJwtGuard)
+  @ApiPaginationQuery(paginateConfig) 
+  @Get('/myserie')
+  Myseries(@Paginate() query: PaginateQuery, @Req() req: { user?: LoggedInDto }) {
+    return this.seriesService.Myseries(query, req.user);
+  }
+
+  @UseGuards(OptionalJwtGuard)
   @Get(':id')
   findOne(@Param('id') id: string, @Req() req: { user?: LoggedInDto }) {
     return this.seriesService.findOne(+id, req.user);

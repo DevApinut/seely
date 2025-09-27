@@ -10,16 +10,20 @@ import { JwtStrategy } from './auth/strategies/jwt.strategy';
 import { AuthModule } from './auth/auth.module';
 import { dataSourceOptions } from './data-source';
 import { SuggestModule } from './suggest/suggest.module';
+import { APP_PIPE } from '@nestjs/core';
+import { ZodValidationPipe } from 'nestjs-zod';
+import { ConfigifyModule } from '@itgorillaz/configify';
 
 @Module({
   imports: [
-    TypeOrmModule.forRootAsync({
+   TypeOrmModule.forRootAsync({
       useFactory: () => ({
         ...dataSourceOptions,
         autoLoadEntities: true,
-        synchronize: true,
+        synchronize: process.env.NODE_ENV === 'local', // sync only local
       })
     }),
+    ConfigifyModule.forRootAsync(),
     SeriesModule,
     RatingModule,
     UsersModule,
@@ -27,6 +31,6 @@ import { SuggestModule } from './suggest/suggest.module';
     SuggestModule,    
   ],
   controllers: [AppController],
-  providers: [AppService, JwtStrategy],
+  providers: [ { provide: APP_PIPE, useClass: ZodValidationPipe },AppService, JwtStrategy],
 })
 export class AppModule {}
