@@ -40,4 +40,10 @@ export class Series {
   // Virtual columns for aggregated data
   totalSuggests?: number;
   averageScore?: number;
+
+  @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
+  createdAt: Date;
+
+  @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
+  updatedAt: Date;
 }
