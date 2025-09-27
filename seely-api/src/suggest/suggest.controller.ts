@@ -30,16 +30,6 @@ export class SuggestController {
     return this.suggestService.create(createSuggestDto, req.user);
   }
 
-  @Get()
-  findAll() {
-    return this.suggestService.findAll();
-  }
-
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.suggestService.findOne(+id);
-  }
-
   @UseGuards(AuthGuard('jwt'))
   @Patch(':id')
   update(

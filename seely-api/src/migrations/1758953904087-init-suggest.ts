@@ -6,7 +6,7 @@ export class InitSuggest1758953904087 implements MigrationInterface {
         // Insert initial suggests data (15 examples)
         await queryRunner.query(`
             INSERT INTO "suggest" ("series_id", "score", "username") VALUES
-            (1, 9, 'apinut'),
+            (4, 9, 'apinut'),
             (1, 8, 'john'),
             (2, 10, 'kaewmunee'),
             (5, 7, 'donut'),

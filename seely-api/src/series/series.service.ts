@@ -74,7 +74,12 @@ export class SeriesService {
       .leftJoinAndSelect('series.rating', 'rating')
       .leftJoin('series.user', 'seriesUser')
       .addSelect('seriesUser.username')
-      .leftJoin('series.suggests', 'suggests')
+      .leftJoin(
+        'series.suggests',
+        'suggests',
+        'suggests.series_id = series.id AND suggests.username = :username',
+        { username: loggedInDto.username },
+      )
       .addSelect(['suggests.series_id', 'suggests.score'])
       .leftJoin('suggests.user', 'suggestUser')
       .addSelect(['suggestUser.username', 'suggestUser.role'])
