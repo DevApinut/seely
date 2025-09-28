@@ -3,6 +3,13 @@ import { INestApplication } from '@nestjs/common';
 import { AppModule } from '../../src/app.module';
 import request from 'supertest';
 import { DataSource } from 'typeorm';
+import { config } from 'dotenv';
+
+// Load environment variables for testing
+config();
+
+// Force disable TLS rejection for tests
+process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
 
 export class TestSetup {
   static async createTestApp(): Promise<INestApplication> {

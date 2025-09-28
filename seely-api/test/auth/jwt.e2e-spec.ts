@@ -26,6 +26,7 @@ describe('JWT Authentication (e2e)', () => {
       // Check if response has accessToken
       
       expect(response.body).toHaveProperty('accessToken');
+      expect(response.body).toHaveProperty('refreshToken');
       
       // Check cookies      
       expect(response.headers['set-cookie']).toBeDefined();

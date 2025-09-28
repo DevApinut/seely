@@ -89,7 +89,7 @@ describe('JWT Authentication (e2e)', () => {
       // Try to access /users/me with invalid token
       await request(getApp().getHttpServer())
         .get('/users/me')
-        .set('Authorization', 'Bearer invalid_token_here')
+        .set('Authorization', 'Bearer wrong_token_By_donut')
         .expect(401);
     });
   });
