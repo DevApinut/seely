@@ -1,8 +1,8 @@
 import { MigrationInterface, QueryRunner } from "typeorm";
 
-export class InitRating1758952363821 implements MigrationInterface {
+export class InitRating1759050190324 implements MigrationInterface {
 
-    public async up(queryRunner: QueryRunner): Promise<void> {
+      public async up(queryRunner: QueryRunner): Promise<void> {
         // Insert initial rating data
         await queryRunner.query(`
             INSERT INTO "ratings" ("name", "description") VALUES 

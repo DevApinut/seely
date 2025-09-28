@@ -1,10 +1,9 @@
-import { MigrationInterface, QueryRunner } from "typeorm";
+import { MigrationInterface, QueryRunner } from 'typeorm';
 
-export class InitUser1758953112619 implements MigrationInterface {
-
-    public async up(queryRunner: QueryRunner): Promise<void> {
-        // Insert initial users data
-        await queryRunner.query(`
+export class InitUsers1759050199047 implements MigrationInterface {
+  public async up(queryRunner: QueryRunner): Promise<void> {
+    // Insert initial users data
+    await queryRunner.query(`
             INSERT INTO "users" ("username", "password", "role", "keycloak_id") VALUES
             ('apinut', '$2b$10$xlyzjURC7TUYVFWOYj0Kbu.9NFzwIDJTq3fuur1Yw4.TVZUNn1gi.', 'USER', NULL),
             ('john', '$2b$10$/uHUZqEZx4DLK5K985F.i.bx74Vi9GUHhLLQamFPJhjKufFjNhVX2', 'USER', NULL),
@@ -13,11 +12,11 @@ export class InitUser1758953112619 implements MigrationInterface {
             ('apinut555@gmail.com', NULL, 'USER', '392de118-0c0c-40e4-a628-9b77b1354c42'),
             ('wer987654321@hotmail.com', NULL, 'USER', '3c632971-d475-4d23-adeb-06b9a18131b8');
         `);
-    }
+  }
 
-    public async down(queryRunner: QueryRunner): Promise<void> {
-        // Remove initial users data
-        await queryRunner.query(`
+  public async down(queryRunner: QueryRunner): Promise<void> {
+    // Remove initial users data
+    await queryRunner.query(`
             DELETE FROM "users" WHERE "username" IN (
                 'apinut', 
                 'john', 
@@ -27,6 +26,5 @@ export class InitUser1758953112619 implements MigrationInterface {
                 'wer987654321@hotmail.com'
             );
         `);
-    }
-
+  }
 }

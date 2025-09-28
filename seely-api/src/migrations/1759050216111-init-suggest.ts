@@ -1,8 +1,8 @@
 import { MigrationInterface, QueryRunner } from "typeorm";
 
-export class InitSuggest1758953904087 implements MigrationInterface {
+export class InitSuggest1759050216111 implements MigrationInterface {
 
-    public async up(queryRunner: QueryRunner): Promise<void> {
+      public async up(queryRunner: QueryRunner): Promise<void> {
         // Insert initial suggests data (15 examples)
         await queryRunner.query(`
             INSERT INTO "suggest" ("series_id", "score", "username") VALUES

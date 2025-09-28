@@ -36,14 +36,14 @@ export class SeriesService {
           'suggests.series_id = series.id AND suggests.username = :username',
           { username: loggedInDto.username },
         )
-        .addSelect(['suggests.series_id', 'suggests.score'])
+        .addSelect(['suggests.series_id', 'suggests.score','suggests.comment'])
         .leftJoin('suggests.user', 'suggestUser')
         .addSelect(['suggestUser.username', 'suggestUser.role']);
     } else {
       // For non-logged users, still load suggests structure but empty
       query
         .leftJoin('series.suggests', 'suggests', '1=0') 
-        .addSelect(['suggests.series_id', 'suggests.score'])
+        .addSelect(['suggests.series_id', 'suggests.score','suggests.comment'])
         .leftJoin('suggests.user', 'suggestUser', '1=0')
         .addSelect(['suggestUser.username', 'suggestUser.role']);
     }
@@ -80,7 +80,7 @@ export class SeriesService {
         'suggests.series_id = series.id AND suggests.username = :username',
         { username: loggedInDto.username },
       )
-      .addSelect(['suggests.series_id', 'suggests.score'])
+      .addSelect(['suggests.series_id', 'suggests.score','suggests.comment'])
       .leftJoin('suggests.user', 'suggestUser')
       .addSelect(['suggestUser.username', 'suggestUser.role'])
       .where('seriesUser.username = :username', {

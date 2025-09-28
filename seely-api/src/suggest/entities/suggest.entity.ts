@@ -23,6 +23,9 @@ export class Suggest {
   @Column()
   score: number;
 
+  @Column({ nullable: true })
+  comment: string;
+
   @ManyToOne(() => User)
   @JoinColumn({ name: 'username', referencedColumnName: 'username' })
   user: User;
