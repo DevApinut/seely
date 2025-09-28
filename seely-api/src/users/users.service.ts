@@ -37,7 +37,6 @@ export class UsersService {
       { username, keycloakId },
       { conflictPaths: ['keycloakId'] }
     )
-    console.log('upsert', result)
     return this.repository.findOneByOrFail({ keycloakId })
   }
 
