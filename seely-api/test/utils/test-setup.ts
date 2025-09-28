@@ -1,6 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { INestApplication } from '@nestjs/common';
 import { AppModule } from '../../src/app.module';
+import request from 'supertest';
 
 export class TestSetup {
   static async createTestApp(): Promise<INestApplication> {
@@ -15,6 +16,22 @@ export class TestSetup {
 
   static async closeTestApp(app: INestApplication): Promise<void> {
     await app.close();
+  }
+
+  // Helper function to login and get tokens
+  static async loginAndGetTokens(
+    app: INestApplication,
+    loginData: { username: string ; password: string }
+  ): Promise<{ accessToken: string; refreshToken: string }> {
+    const response = await request(app.getHttpServer())
+      .post('/auth/login')
+      .send(loginData)
+      .expect(201);
+
+    return {
+      accessToken: response.body.accessToken,
+      refreshToken: response.body.refreshToken,
+    };
   }
 }
 

@@ -5,37 +5,32 @@ import { setupTestApp } from '../utils/test-setup';
 describe('JWT Authentication (e2e)', () => {
   const getApp = setupTestApp();
 
-  //
-  //------------------------- Authentication Test JWT Login-------------------------------
-  //
+  
+  //------------------------- Authentication Test JWT Login-------------------------------  
   describe('Authentication JWT', () => {
-    //
-    // Set up data for JWT test
-    //
+    
+    // Set up data for JWT test    
     const loginData = {
       username: 'apinut',
       password: '1234',
     };
 
-    //
-    // For test login recieve accesstoken (201)
-    //
+    
+    // For test login recieve accesstoken (201)    
     it('/auth/login Should be login success', async () => {
       const response = await request(getApp().getHttpServer())
         .post('/auth/login')
         .send(loginData)
         .expect(201);
-      //
+      
       // Check if response has accessToken
-      //
+      
       expect(response.body).toHaveProperty('accessToken');
-      //
-      // Check cookies
-      //
+      
+      // Check cookies      
       expect(response.headers['set-cookie']).toBeDefined();
-      //
-      // Check refresh token in cookie
-      //
+      
+      // Check refresh token in cookie      
       const setCookie = response.headers['set-cookie'];
       const cookies = Array.isArray(setCookie) ? setCookie : [setCookie];
       const accessTokenCookie = cookies.find((cookie) =>
@@ -58,26 +53,20 @@ describe('JWT Authentication (e2e)', () => {
           password: '12345',
         })
         .expect(401);
-
-      //
-      // Error wrong password (401) Error
-      //
+      // Error wrong password (401) Error      
       expect(response.body).toHaveProperty('error');
       expect(response.body).toHaveProperty('message');
       expect(response.body).toHaveProperty('statusCode', 401);
-      //
-      // Should not recieve accessToken
-      //
+     
+      // Should not recieve accessToken      
       expect(response.body).not.toHaveProperty('accessToken');
-      //
-      // Should not set cookie
-      //
+      
+      // Should not set cookie      
       expect(response.headers['set-cookie']).toBeUndefined();
     });
 
-    //
-    // Don't have username on database Internal ERROR 500
-    //
+    
+    // Don't have username on database Internal ERROR 500    
     it('/auth/login wrong username', async () => {
       const response = await request(getApp().getHttpServer())
         .post('/auth/login')
@@ -87,38 +76,32 @@ describe('JWT Authentication (e2e)', () => {
         })
         .expect(500);
 
-      //
-      // Error wrong password
-      //
+      
+      // Error wrong password      
       expect(response.body).toHaveProperty('message');
       expect(response.body).toHaveProperty('statusCode', 500);
       expect(response.body.message).toContain('Internal server error');
-      //
-      // Should not recieve accessToken
-      //
-      expect(response.body).not.toHaveProperty('accessToken');
-      //
-      // Should not set cookie
-      //
+      
+      // Should not recieve accessToken      
+      expect(response.body).not.toHaveProperty('accessToken');      
+      // Should not set cookie      
       expect(response.headers['set-cookie']).toBeUndefined();
     });
   });
   
-  //
-  //--------------------------- Authentication Test JWT Logout-------------------------------
-  //
+  
+  //--------------------------- Authentication Test JWT Logout-------------------------------  
   describe('Logout JWT', () => {
-    //
-    // For test logout
-    //
+    
+    // For test logout    
     it('/auth/logout Should be clear cookie', async () => {
       const response = await request(getApp().getHttpServer())
-        .post('/auth/logout') // Changed from '/auth/out' to '/auth/logout'
-        .expect(201); // Usually logout returns 200
+        .post('/auth/logout') 
+        .expect(201); 
 
-      //
+      
       // Check refresh token in cookie
-      //
+      
       const setCookie = response.headers['set-cookie'];
       const cookies = Array.isArray(setCookie) ? setCookie : [setCookie];
 
