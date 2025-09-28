@@ -2,6 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { INestApplication } from '@nestjs/common';
 import { AppModule } from '../../src/app.module';
 import request from 'supertest';
+import { DataSource } from 'typeorm';
 
 export class TestSetup {
   static async createTestApp(): Promise<INestApplication> {
@@ -33,6 +34,23 @@ export class TestSetup {
       refreshToken: response.body.refreshToken,
     };
   }
+
+  // Delete specific user by username (using direct database query)
+  static async deleteUserByUsername(
+    app: INestApplication,
+    username: string
+  ): Promise<void> {
+    try {
+      const dataSource = app.get(DataSource);
+      
+      // Delete user by username from 'users' table
+      await dataSource.query('DELETE FROM "users" WHERE username = $1', [username]);
+      
+      console.log(`User ${username} deleted successfully`);
+    } catch (error) {
+      console.log(`Failed to delete user ${username}:`, error.message);
+    }
+  }
 }
 
 export const setupTestApp = () => {
@@ -43,6 +61,8 @@ export const setupTestApp = () => {
   });
 
   afterEach(async () => {
+    // Optional: Clean database after each test as well
+    // await TestSetup.cleanDatabase(app);
     await TestSetup.closeTestApp(app);
   });
 
