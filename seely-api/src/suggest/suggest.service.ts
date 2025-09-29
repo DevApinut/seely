@@ -30,7 +30,7 @@ export class SuggestService {
 
       if (ownSeries) {
         throw new NotFoundException(
-          `You are not allowed to rate your own series`,
+          `You are not allowed to review your own series`,
         );
       }
 
