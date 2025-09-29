@@ -152,11 +152,6 @@ export class KeycloakService {
       codeVerifier,
       url: `code=${code}&state=${state}&session_state=${sessionState}&iss=${issuer}`,
     });
-
-    // // ลบ cookies ที่ใช้แล้ว
-    // res.clearCookie('state');
-    // res.clearCookie('codeVerifier');
-
     // ตั้งค่า cookies สำหรับ tokens
     res.cookie('idToken', result.idToken);
     res.cookie('refreshToken', result.tokensDto.refreshToken);
