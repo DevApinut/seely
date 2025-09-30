@@ -9,8 +9,7 @@ describe('UsersController', () => {
   let controller: UsersController;
   let usersService: UsersService;
 
-  const mockUsersService = {
-    // Create function for mock data
+  const mockUsersService = {    
     create: jest.fn(),
     findByUsername: jest.fn(),
   };
@@ -25,73 +24,62 @@ describe('UsersController', () => {
         },
       ],
     }).compile();
-
     controller = module.get<UsersController>(UsersController);
     usersService = module.get<UsersService>(UsersService);
-  });
-
-  it('should be defined', () => {
-    expect(controller).toBeDefined();
-  });
+  }); 
 
   describe('create', () => {
     it('should create a new user', async () => {
       const createUserDto: CreateUserDto = {
-        username: 'testuser',
-        password: 'password123',
+        username: 'apinut',
+        password: '1234',
         role: Role.USER,
       };
-
       const expectedUser: User = {
         id: 1,
-        username: 'testuser',
-        password: 'hashedPassword',
+        username: 'apinut',
+        password: '1234',
         role: Role.USER,
         keycloakId: 'Donut_id',
         createdAt: new Date(),
         updatedAt: new Date(),
       };
-
-      //   Setup return mock
       mockUsersService.create.mockResolvedValue(expectedUser);
-
-      //   call create for return mock
       const result = await controller.create(createUserDto);
-
       // Assert
-      expect(usersService.create).toHaveBeenCalledWith(createUserDto);
-      expect(usersService.create).toHaveBeenCalledTimes(1);
+      expect(mockUsersService.create).toHaveBeenCalledWith(createUserDto);
+      expect(mockUsersService.create).toHaveBeenCalledTimes(1);
       expect(result).toEqual(expectedUser);
     });
   });
 
   describe('findByUsername', () => {
-    it('should return user by username from request', async () => {
-      // Arrange
+    it('should return user', async () => {
+      
       const loggedInUser: LoggedInDto = {
-        username: 'testuser',
+        username: 'apinut',
         role: 'USER',
       };
 
       const expectedUser: User = {
         id: 1,
-        username: 'testuser',
-        password: 'hashedPassword',
+        username: 'apinut',
+        password: '1234',
         role: Role.USER,
         keycloakId: 'Donut_id',
         createdAt: new Date(),
         updatedAt: new Date(),
       };
 
-      const mockRequest = { user: loggedInUser };
+      const mocklogin = { user: loggedInUser };
       mockUsersService.findByUsername.mockResolvedValue(expectedUser);
 
       // Act
-      const result = await controller.findByUsername(mockRequest);
+      const result = await controller.findByUsername(mocklogin);
 
       // Assert
-      expect(usersService.findByUsername).toHaveBeenCalledWith('testuser'); 
-      expect(usersService.findByUsername).toHaveBeenCalledTimes(1);
+      expect(mockUsersService.findByUsername).toHaveBeenCalledWith(mocklogin.user.username); 
+      expect(mockUsersService.findByUsername).toHaveBeenCalledTimes(1);
       expect(result).toEqual(expectedUser);
     });
   });

@@ -4,16 +4,19 @@ import { Repository } from 'typeorm';
 import { UsersService } from './users.service';
 import { User, Role } from './entities/user.entity';
 import { CreateUserDto } from './dto/create-user.dto';
-import bcrypt from 'bcrypt';
 
-// Mock bcrypt
-jest.mock('bcrypt');
-const mockedBcrypt = bcrypt as jest.Mocked<typeof bcrypt>;
+jest.mock('bcrypt', () => ({
+  hash: jest.fn(),
+}));
+
+import * as bcrypt from 'bcrypt';
+
 
 describe('UsersService', () => {
   let service: UsersService;
   let repository: jest.Mocked<Repository<User>>;
 
+  const mockedBcrypt = jest.mocked(bcrypt);
   const mockRepository = {
     save: jest.fn(),
     findOneByOrFail: jest.fn(),
@@ -38,12 +41,8 @@ describe('UsersService', () => {
     jest.clearAllMocks();
   });
 
-  it('should be defined', () => {
-    expect(service).toBeDefined();
-  });
-
   describe('create', () => {
-    it('should create a new user with hashed password', async () => {
+    it('should create a new user', async () => {
       // Arrange
       const createUserDto: CreateUserDto = {
         username: 'apinut',
@@ -62,32 +61,32 @@ describe('UsersService', () => {
         updatedAt: new Date(),
       };
 
-      // Mock bcrypt.hash
       mockedBcrypt.hash.mockResolvedValue(hashedPassword as never);
-      // Mock repository.save
       mockRepository.save.mockResolvedValue(expectedUser);
-
       // Act
       const result = await service.create(createUserDto);
 
       // Assert
-      expect(bcrypt.hash).toHaveBeenCalledWith('1234', 10);
-      expect(repository.save).toHaveBeenCalledWith(createUserDto);
+      expect(mockedBcrypt.hash).toHaveBeenCalledWith('1234', 10);
+      expect(repository.save).toHaveBeenCalledWith({
+        ...createUserDto,
+        password: hashedPassword
+      });
       expect(result).toEqual(expectedUser);
     });
-    
+
   });
 
   describe('findByUsername', () => {
     it('should return user by username', async () => {
       // Arrange
-      const username = 'testuser';
+      const username = 'apinut';
       const expectedUser: User = {
         id: 1,
         username,
-        password: 'hashedPassword',
+        password: '1234',
         role: Role.USER,
-        keycloakId: 'keycloak123',
+        keycloakId: '1234',
         createdAt: new Date(),
         updatedAt: new Date(),
       };
@@ -107,12 +106,12 @@ describe('UsersService', () => {
     it('should return KeycloakID', async () => {
       // Arrange      
       const username = 'apinut';
-      const keycloakId = 'test';
+      const keycloakId = '1234';
       const upsertResult = {};
       const expectedUser: User = {
         id: 1,
         username,
-        password: 'hashedPassword',
+        password: '1234',
         role: Role.USER,
         keycloakId,
         createdAt: new Date(),
@@ -134,5 +133,5 @@ describe('UsersService', () => {
       expect(result).toEqual(expectedUser);
     });
   });
-  
+
 });
