@@ -58,12 +58,10 @@ POST http://localhost:3000/api/v1/keycloak/login
 **User Login**
   username: apinut555@gmail.com
   password: 1234
-
-```
-
+  
 ---
 
-## **Keycloak API — Logout**
+## **Keycloak API  — Login**
 **Endpoint**
 ```
 POST http://localhost:3000/api/v1/keycloak/logout
@@ -71,11 +69,11 @@ POST http://localhost:3000/api/v1/keycloak/logout
 
 ---
 
-## 🗄️ **Database Connection**
+## **Database Connection**
 ```
 postgres://postgres:pass2word@localhost:5432/seelyuat
 ```
 
 ---
 
-✅ Now your app, Swagger docs, Keycloak, and DB connection are all set up!
+Now your app, Swagger docs, Keycloak, and DB connection are all set up!
