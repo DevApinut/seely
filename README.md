@@ -1,25 +1,81 @@
-**LET's Start**
-1.Open rancher for run docker and use command **docker compose up**
-2.cd seely-api (change directory to folder seely-api)
-3.npm install (install dependency)
-4.npm run start:dev (it run migration:run and start application at port 3000)
+# 🚀 **Seely API — Quickstart Guide**
 
-**Swagger for api doc**
-localhost:3000/api
+---
 
-**Login admin keycloak at port 8443**
-https://localhost:8443
-username:admin
-password:admin
+## **Step 1: Start Docker Containers**
+Open Rancher (to run Docker) and execute:
+```bash
+docker compose up -d
+```
 
-**api keycloak login**
-localhost:3000/api/v1/keycloak/login
-username:apinut555@gmail.com
-password:1234
+---
 
-**api keycloak login**
-localhost:3000/api/v1/keycloak/logout
+## **Step 2: Change Directory**
+Move into the project folder:
+```bash
+cd seely-api
+```
 
-**database connect**
+---
+
+## **Step 3: Install Dependencies**
+```bash
+npm install
+```
+
+---
+
+## **Step 4: Run Application in Dev Mode**
+```bash
+npm run start:dev
+```
+
+👉 This will automatically run **migration:run** and start the application at **http://localhost:3000**
+
+---
+
+## 📖 **API Documentation (Swagger)**
+Open in browser:
+```
+http://localhost:3000/api
+```
+
+---
+
+## **Keycloak Admin Console**
+- URL: <https://localhost:8443>
+- Username: **admin**
+- Password: **admin**
+
+---
+
+## **Keycloak API — Login**
+**Endpoint**
+```
+POST http://localhost:3000/api/v1/keycloak/login
+```
+
+**User Login**
+  username: apinut555@gmail.com
+  password: 1234
+
+```
+
+---
+
+## **Keycloak API — Logout**
+**Endpoint**
+```
+POST http://localhost:3000/api/v1/keycloak/logout
+```
+
+---
+
+## 🗄️ **Database Connection**
+```
 postgres://postgres:pass2word@localhost:5432/seelyuat
+```
 
+---
+
+✅ Now your app, Swagger docs, Keycloak, and DB connection are all set up!
