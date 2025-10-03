@@ -34,7 +34,7 @@ This will automatically run **migration:run** and start the application at **htt
 
 ---
 
-## 📖 **API Documentation (Swagger)**
+## **API Documentation (Swagger)**
 Open in browser:
 ```
 http://localhost:3000/api
