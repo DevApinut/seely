@@ -1,4 +1,4 @@
-# 🚀 **Seely API — Quickstart Guide**
+# **Seely API — Quickstart Guide**
 
 ---
 
@@ -30,7 +30,7 @@ npm install
 npm run start:dev
 ```
 
-👉 This will automatically run **migration:run** and start the application at **http://localhost:3000**
+This will automatically run **migration:run** and start the application at **http://localhost:3000**
 
 ---
 
